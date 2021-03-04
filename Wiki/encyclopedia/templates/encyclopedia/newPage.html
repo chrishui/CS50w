@@ -1,0 +1,20 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <h1> {{ header }} </h1>
+
+    <form method="post" action="{% url 'newPageRef' %}">
+      {% csrf_token %}
+      <p> New Title: </p>
+      {{ titleForm }}
+      <p> New Content: </p>
+      {{ contentForm }}
+      <br>
+      <button type="submit">{{ button }}</button>
+    </form>
+
+{% endblock %}

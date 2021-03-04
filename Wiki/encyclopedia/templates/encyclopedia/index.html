@@ -1,0 +1,21 @@
+{% extends "encyclopedia/layout.html" %}
+
+<!-- Title return "Encyclopedia" or "Search result"
+Depending on index request or search request -->
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block body %}
+    <!-- Heading return "All pages" or "Search result"
+    Depending on index request or search request -->
+    <h1>{{heading}}</h1>
+
+    <ul>
+        {% for entry in entries %}
+            <!-- Link each entry to their respective pages -->
+            <li><a href = "{% url 'entry' title=entry %}"> {{ entry }} </a></li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

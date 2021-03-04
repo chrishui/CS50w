@@ -1,0 +1,14 @@
+<!-- Encyclopedia page for each entry -->
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block body %}
+    <!-- Content referenced from views.py -->
+    {{content|safe}}
+    <br>
+    <!-- Link to edit page -->
+    <button><a href = "{% url 'editRef' title=title  %}"> Edit </a></button>
+{% endblock %}
