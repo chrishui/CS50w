@@ -25,14 +25,14 @@ def index(request):
 
 # Wiki entry page for wiki/TITLE
 def entry(request, title):
-    # if client request is valid
+    # if client request is matches wiki entry
     if title in util.list_entries():
         # Get request for wiki entry page
         return render(request, "encyclopedia/entry.html", {
             "title": title,
             "content": markdown2.markdown(util.get_entry(title))
         })
-    # If client request is invalid
+    # If client request does not match with wiki entry
     else:
         return render(request, "encyclopedia/error.html", {
             "message": "Entry is not found!"
