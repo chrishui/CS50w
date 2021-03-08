@@ -102,8 +102,8 @@ def editPage(request, title):
             util.save_entry(title, content)
             return redirect("entry", title=title)
 
+    # Get request for edit page
     else:
-        # Get request for edit page
         content = util.get_entry(title)
         return render(request, "encyclopedia/editPage.html",{
             "title": "Edit page",
