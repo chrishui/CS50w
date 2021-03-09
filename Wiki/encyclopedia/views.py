@@ -25,7 +25,7 @@ def index(request):
 
 # Wiki entry page for wiki/TITLE
 def entry(request, title):
-    # if client request is matches wiki entry
+    # if client request matches wiki entry
     if title in util.list_entries():
         # Get request for wiki entry page
         return render(request, "encyclopedia/entry.html", {
