@@ -8,10 +8,13 @@ from django import forms
 from .models import User
 from .models import *
 
-
+# Main page
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html" , {
+        "listings": Listing.objects.all()
+    })
 
+# Login
 def login_view(request):
     if request.method == "POST":
 
@@ -31,10 +34,12 @@ def login_view(request):
     else:
         return render(request, "auctions/login.html")
 
+# Logout
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
+# Register
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -68,7 +73,8 @@ class ListingForm(forms.Form):
     name = forms.CharField(label='Listing name:', max_length = 64)
     description = forms.CharField(label='Description:', widget=forms.Textarea, max_length = 64)
     price = forms.IntegerField(label='Price($):')
-    category = forms.ChoiceField(required=False, choices=CATEGORIES)
+    category = forms.ChoiceField(label='Category:', required=False, choices=CATEGORIES)
+    image = forms.URLField(label='Image (URL):', required=False)
 
 def createListing(request):
     # Post request
@@ -81,9 +87,10 @@ def createListing(request):
             description = form.cleaned_data["description"]
             price = form.cleaned_data["price"]
             category = form.cleaned_data["category"]
+            image = form.cleaned_data["image"]
 
             # Create new entry for Listing
-            newEntry = Listing(name=name, description=description, price=price, category=category)
+            newEntry = Listing(name=name, description=description, price=price, category=category, image=image)
             newEntry.save()
 
             # Return createListing page with message confirmation

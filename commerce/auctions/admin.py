@@ -8,7 +8,7 @@ import datetime
 
 # Admin interfaces
 class ListingAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "description", "price", "category")
+    list_display = ("id", "name", "description", "price", "category", "image")
 
 class BidAdmin(admin.ModelAdmin):
     list_display = ("id", "item", "bidPrice")

@@ -19,6 +19,7 @@ class Listing(TimeStampMixin):
     description = models.CharField(max_length=64)
     price = models.IntegerField()
     category = models.CharField(max_length=64)
+    image = models.URLField()
 
     def __str__(self):
         return f"{self.id}, {self.name}: ${self.price}. Description: {self.description}."
