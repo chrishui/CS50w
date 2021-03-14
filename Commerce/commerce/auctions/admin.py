@@ -11,10 +11,10 @@ class ListingAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "description", "price", "category")
 
 class BidAdmin(admin.ModelAdmin):
-    filter_horizontal = ("item",)
+    list_display = ("id", "item", "bidPrice")
 
 class CommentAdmin(admin.ModelAdmin):
-    filter_horizontal = ("item",)
+    list_display = ("id", "item", "comment")
 
 admin.site.register(Listing, ListingAdmin)
 admin.site.register(Bid, BidAdmin)

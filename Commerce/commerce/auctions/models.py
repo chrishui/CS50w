@@ -25,7 +25,7 @@ class Listing(TimeStampMixin):
 
 # Bids
 class Bid(models.Model):
-    item = models.ManyToManyField(Listing, blank=True, related_name="bids")
+    item = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
     bidPrice = models.IntegerField()
 
     def __str__(self):
@@ -33,7 +33,7 @@ class Bid(models.Model):
 
 # Comments
 class Comment(models.Model):
-    item = models.ManyToManyField(Listing, blank=True, related_name="comments")
+    item = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
     comment = models.CharField(max_length=64)
 
     def __str__(self):
