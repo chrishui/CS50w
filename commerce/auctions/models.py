@@ -15,6 +15,7 @@ class TimeStampMixin(models.Model):
 
 # Auction listing
 class Listing(TimeStampMixin):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=64)
     price = models.IntegerField()
@@ -29,6 +30,7 @@ class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
     bidPrice = models.IntegerField()
+    bidCount = models.IntegerField()
 
     def __str__(self):
         return f"Bid price: ${self.bidPrice}"

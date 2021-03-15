@@ -6,7 +6,7 @@
       {% for listing in listings %}
         <div>
           <h3> <a href="{% url 'listing' listing.id%}"> {{listing.id}}: {{ listing.name }} </a> </h3>
-          <p> <b>Price:</b> ${{ listing.price }} </p>
+          <p> <b>Starting price:</b> ${{ listing.price }} </p>
           <p> <b>Description:</b> {{ listing.description }} </p>
           <img src="{{ listing.image}}" width="500px">
           <br />

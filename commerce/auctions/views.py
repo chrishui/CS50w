@@ -9,6 +9,8 @@ from django import forms
 from .models import User
 from .models import *
 
+import operator
+
 # Main page
 def index(request):
     return render(request, "auctions/index.html" , {
@@ -77,10 +79,12 @@ class ListingForm(forms.Form):
     category = forms.ChoiceField(label='Category:', required=False, choices=CATEGORIES)
     image = forms.URLField(label='Image (URL):', required=False)
 
+@login_required
 def createListing(request):
     # Post request
     if request.method == "POST":
         form = ListingForm(request.POST)
+        user = request.user
 
         # If submitted form is valid
         if form.is_valid():
@@ -91,7 +95,7 @@ def createListing(request):
             image = form.cleaned_data["image"]
 
             # Create new entry for Listing
-            newEntry = Listing.objects.create(name=name, description=description, price=price, category=category, image=image)
+            newEntry = Listing.objects.create(user=user, name=name, description=description, price=price, category=category, image=image)
             newEntry.save()
 
             # Return createListing page with message confirmation
@@ -112,14 +116,35 @@ def createListing(request):
     })
 
 # Individual listing view
+class BidForm(forms.Form):
+    price = forms.IntegerField(label='Submit bid ($):')
+
+@login_required
 def listing(request, listing_id):
     # Requested listing
     listing = Listing.objects.get(pk=listing_id)
+    # Watchlist
     watchlist_check = Watchlist.objects.filter(user=request.user, listing=listing).exists()
+    # Check for submitted listing bids
+    bid_check = Bid.objects.filter(listing=listing).exists()
+    if bid_check == True:
+        currentBid = Bid.objects.get(listing=listing)
+        currentPrice = currentBid.bidPrice
+        bidCount = currentBid.bidCount
+        highestBidder = currentBid.user
+    # If no bids for listing, show listing's original price
+    else:
+        currentPrice = listing.price
+        bidCount = 0
+
     # Get request
     return render(request, "auctions/listing.html", {
         "listing": listing,
-        "watchlist_check": watchlist_check
+        "watchlist_check": watchlist_check,
+        "currentPrice": currentPrice,
+        "bidForm": BidForm(),
+        "bidCount": bidCount,
+        "highestBidder": highestBidder,
     })
 
 # Watchlist
@@ -157,3 +182,47 @@ def userWatchlist(request):
     return render(request, "auctions/watchlist.html", {
         "listings": listings,
     })
+
+# Bid
+@login_required
+def bid(request, listing_id):
+    if request.method == "POST":
+        listing = Listing.objects.get(pk=listing_id)
+        user = request.user
+        # User's submitted bid
+        bidForm = BidForm(request.POST)
+        if bidForm.is_valid():
+            bid = bidForm.cleaned_data["price"]
+
+            # Check for submitted listing bids
+            bid_check = Bid.objects.filter(listing=listing).exists()
+
+            # If there are no bids on listing
+            if bid_check == False:
+                # If bid is less than listing Price
+                if bid < listing.price:
+                    return render(request, "auctions/error.html", {
+                        "message": "Bid must be higher than current price!"
+                    })
+                # Create new bid instance
+                else:
+                    newEntry = Bid.objects.create(user=user, listing=listing, bidPrice=bid, bidCount=1)
+                    newEntry.save()
+
+            # If listing has been previously bid
+            else:
+                currentBid = Bid.objects.get(listing=listing)
+                currentPrice = currentBid.bidPrice
+
+                # If bid is less than current price / highest bid
+                if bid < currentPrice:
+                    return render(request, "auctions/error.html", {
+                        "message": "Bid must be higher than current price!"
+                    })
+
+                # Else, update bidPrice in model instance
+                else:
+                    bidCount = Bid.objects.get(listing=listing).bidCount
+                    Bid.objects.filter(listing=listing).update(bidPrice=bid, user=user, bidCount=bidCount+1)
+
+        return HttpResponseRedirect(reverse("listing", args=(listing.id,)))

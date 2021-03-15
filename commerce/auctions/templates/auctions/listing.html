@@ -1,14 +1,16 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+<!-- Listing details -->
 <h2> {{listing.id}}: {{ listing.name }} </h2>
-<p> <b>Price:</b> ${{ listing.price }} </p>
+<p> <b>Starting price:</b> ${{ listing.price }} </p>
 <p> <b>Description:</b> {{ listing.description }} </p>
 <img src="{{ listing.image}}" width="500px">
 <br />
 <sub> Created at: {{ listing.created_at }} </sub>
+<br />
 
-<!-- Watchlist -->
+<!-- Add to watchlist -->
 <form action="{% url 'watchlist' listing.id %}" method="post">
   {% csrf_token %}
   <!-- If listing already added to user's watchlist -->
@@ -20,6 +22,19 @@
     <input type="submit" value="Add to watchlist" class="btn btn-outline-primary">
   {% endif %}
 </form>
+<br />
 
+<!-- Current price / highest bid -->
+<p><b> Current price / highest bid:</b> ${{currentPrice}} </p>
+<sub> {{bidCount}} bid(s) so far.</sub>
+{% if highestBidder %}
+  <sub> {{highestBidder}} has the highest bidder. </sub>
+{% endif %}
+<form action="{% url 'placebid' listing.id %}" method="POST">
+  {% csrf_token %}
+  {{ bidForm.label }}
+  {{ bidForm }}
+  <input type="submit" />
+</form>
 
 {% endblock %}

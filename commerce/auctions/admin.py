@@ -8,16 +8,15 @@ import datetime
 
 # Admin interfaces
 class ListingAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "description", "price", "category", "image")
+    list_display = ("id", "user", "name", "description", "price", "category", "image")
 
 class BidAdmin(admin.ModelAdmin):
-    list_display = ("id", "listing", "bidPrice")
+    list_display = ("id", "user", "listing", "bidPrice", "bidCount")
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("id", "listing", "comment")
+    list_display = ("id", "user", "listing", "comment")
 
 class WatchlistAdmin(admin.ModelAdmin):
-    #filter_horizontal = ("listing",)
     list_display = ("id", "user", "listing")
 
 admin.site.register(Listing, ListingAdmin)
