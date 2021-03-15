@@ -1,0 +1,25 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<h2> {{listing.id}}: {{ listing.name }} </h2>
+<p> <b>Price:</b> ${{ listing.price }} </p>
+<p> <b>Description:</b> {{ listing.description }} </p>
+<img src="{{ listing.image}}" width="500px">
+<br />
+<sub> Created at: {{ listing.created_at }} </sub>
+
+<!-- Watchlist -->
+<form action="{% url 'watchlist' listing.id %}" method="post">
+  {% csrf_token %}
+  <!-- If listing already added to user's watchlist -->
+  {% if watchlist_check == True %}
+    <input type="submit" value="Remove from watchlist" class="btn btn-outline-primary">
+  {% endif %}
+  <!-- If listing doesn't exist in user's watchlist -->
+  {% if watchlist_check == False %}
+    <input type="submit" value="Add to watchlist" class="btn btn-outline-primary">
+  {% endif %}
+</form>
+
+
+{% endblock %}

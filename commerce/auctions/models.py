@@ -22,11 +22,12 @@ class Listing(TimeStampMixin):
     image = models.URLField()
 
     def __str__(self):
-        return f"{self.id}, {self.name}: ${self.price}. Description: {self.description}."
+        return f"{self.id}, {self.name}: ${self.price}."
 
 # Bids
 class Bid(models.Model):
-    item = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
     bidPrice = models.IntegerField()
 
     def __str__(self):
@@ -34,8 +35,17 @@ class Bid(models.Model):
 
 # Comments
 class Comment(models.Model):
-    item = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
     comment = models.CharField(max_length=64)
 
     def __str__(self):
         return f"Comment: {self.comment}"
+
+# Watchlist
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, blank=True, related_name="watchlist")
+
+    def __str__(self):
+        return f"{self.listing}"

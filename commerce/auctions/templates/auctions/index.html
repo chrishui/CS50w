@@ -5,7 +5,7 @@
     <ul>
       {% for listing in listings %}
         <div>
-          <h3> {{listing.id}}: {{ listing.name }} </h3>
+          <h3> <a href="{% url 'listing' listing.id%}"> {{listing.id}}: {{ listing.name }} </a> </h3>
           <p> <b>Price:</b> ${{ listing.price }} </p>
           <p> <b>Description:</b> {{ listing.description }} </p>
           <img src="{{ listing.image}}" width="500px">
@@ -15,5 +15,7 @@
           <hr style="width:50%"/>
       {% endfor %}
     </ul>
+
+
 
 {% endblock %}

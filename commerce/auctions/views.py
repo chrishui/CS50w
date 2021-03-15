@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -90,7 +91,7 @@ def createListing(request):
             image = form.cleaned_data["image"]
 
             # Create new entry for Listing
-            newEntry = Listing(name=name, description=description, price=price, category=category, image=image)
+            newEntry = Listing.objects.create(name=name, description=description, price=price, category=category, image=image)
             newEntry.save()
 
             # Return createListing page with message confirmation
@@ -108,4 +109,51 @@ def createListing(request):
     # Get request
     return render(request, "auctions/createListing.html", {
         "forms": ListingForm()
+    })
+
+# Individual listing view
+def listing(request, listing_id):
+    # Requested listing
+    listing = Listing.objects.get(pk=listing_id)
+    watchlist_check = Watchlist.objects.filter(user=request.user, listing=listing).exists()
+    # Get request
+    return render(request, "auctions/listing.html", {
+        "listing": listing,
+        "watchlist_check": watchlist_check
+    })
+
+# Watchlist
+@login_required
+def watchlist(request, listing_id):
+    if request.method == "POST":
+        # Accessing the listing item
+        listing = Listing.objects.get(pk=listing_id)
+
+        # Finding logged in user
+        user = request.user
+
+        # Check if listing already in Watchlist
+        already_exists = Watchlist.objects.filter(user=user, listing=listing).exists()
+
+        # If already exists, remove from watchlist
+        if already_exists:
+            Watchlist.objects.filter(user=user, listing=listing).delete()
+
+        # Else, create new entry for watchlist
+        else:
+            newEntry = Watchlist.objects.create(user=user, listing=listing)
+            newEntry.save()
+
+        return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+
+# User's saved watchlist
+@login_required
+def userWatchlist(request):
+    user = request.user
+    # Get listings IDs in user's watchlist
+    userWatchlist_IDs = Watchlist.objects.filter(user=user).values('listing_id')
+    listings = Listing.objects.filter(id__in=userWatchlist_IDs)
+    #userlistings = Listing.watchlist.objects.all()
+    return render(request, "auctions/watchlist.html", {
+        "listings": listings,
     })
