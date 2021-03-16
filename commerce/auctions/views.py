@@ -11,16 +11,49 @@ from .models import *
 
 import operator
 
-# Main page
+# Listing info
+def listingInfo(request):
+    no_activeListings = len(Listing.objects.filter(status=True))
+    no_inactiveListings = len(Listing.objects.filter(status=False))
+    try:
+        user = request.user
+        no_userWatchlist = len(Watchlist.objects.filter(user=user))
+    except:
+        no_userWatchlist = None
+    return no_activeListings, no_inactiveListings, no_userWatchlist
+
+# Main page (Active listings)
 def index(request):
+    # Populate layout banners
+    info = listingInfo(request)
+    no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
     return render(request, "auctions/index.html" , {
-        "listings": Listing.objects.all()
+        "listings": Listing.objects.filter(status=True),
+        "no_activeListings": no_activeListings,
+        "no_inactiveListings": no_inactiveListings,
+        "no_userWatchlist": no_userWatchlist,
+
+    })
+
+# Inactive listings
+def inactive(request):
+    # Populate layout banners
+    info = listingInfo(request)
+    no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
+    return render(request, "auctions/inactive.html", {
+        "listings": Listing.objects.filter(status=False),
+        "no_activeListings": no_activeListings,
+        "no_inactiveListings": no_inactiveListings,
+        "no_userWatchlist": no_userWatchlist,
     })
 
 # Login
 def login_view(request):
-    if request.method == "POST":
+    # Populate layout banners
+    info = listingInfo(request)
+    no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
 
+    if request.method == "POST":
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
@@ -35,7 +68,11 @@ def login_view(request):
                 "message": "Invalid username and/or password."
             })
     else:
-        return render(request, "auctions/login.html")
+        return render(request, "auctions/login.html", {
+            "no_activeListings": no_activeListings,
+            "no_inactiveListings": no_inactiveListings,
+            "no_userWatchlist": no_userWatchlist,
+        })
 
 # Logout
 def logout_view(request):
@@ -44,6 +81,10 @@ def logout_view(request):
 
 # Register
 def register(request):
+    # Populate layout banners
+    info = listingInfo(request)
+    no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
+
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
@@ -67,7 +108,11 @@ def register(request):
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "auctions/register.html")
+        return render(request, "auctions/register.html", {
+            "no_activeListings": no_activeListings,
+            "no_inactiveListings": no_inactiveListings,
+            "no_userWatchlist": no_userWatchlist,
+        })
 
 # Create Listing
 CATEGORIES = (("Fashion","Fashion"), ("Toys", "Toys"), ("Electronics", "Electronics"), ("Home", "Home"), ("Misc.", "Misc."),)
@@ -81,6 +126,10 @@ class ListingForm(forms.Form):
 
 @login_required
 def createListing(request):
+    # Populate layout banners
+    info = listingInfo(request)
+    no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
+
     # Post request
     if request.method == "POST":
         form = ListingForm(request.POST)
@@ -101,7 +150,10 @@ def createListing(request):
             # Return createListing page with message confirmation
             return render(request, "auctions/createListing.html", {
                 "forms": ListingForm(),
-                "message": "Listing created!"
+                "message": "Listing created!",
+                "no_activeListings": no_activeListings,
+                "no_inactiveListings": no_inactiveListings,
+                "no_userWatchlist": no_userWatchlist,
             })
 
         # If submitted form is Invalid
@@ -112,7 +164,10 @@ def createListing(request):
 
     # Get request
     return render(request, "auctions/createListing.html", {
-        "forms": ListingForm()
+        "forms": ListingForm(),
+        "no_activeListings": no_activeListings,
+        "no_inactiveListings": no_inactiveListings,
+        "no_userWatchlist": no_userWatchlist,
     })
 
 # Individual listing view
@@ -123,6 +178,10 @@ class CommentForm(forms.Form):
 
 @login_required
 def listing(request, listing_id):
+    # Populate layout banners
+    info = listingInfo(request)
+    no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
+
     # Requested listing
     listing = Listing.objects.get(pk=listing_id)
     # Watchlist
@@ -141,6 +200,11 @@ def listing(request, listing_id):
         bidCount = 0
         highestBidder = None
 
+    # Administrative - listing status
+    user = request.user
+    status = Listing.objects.get(pk=listing_id).status
+    listingCreator = Listing.objects.get(pk=listing_id).user
+
     # Get request
     return render(request, "auctions/listing.html", {
         "listing": listing,
@@ -150,7 +214,12 @@ def listing(request, listing_id):
         "bidCount": bidCount,
         "highestBidder": highestBidder,
         "commentForm": CommentForm(),
-        "comments": Comment.objects.filter(listing=listing)
+        "comments": Comment.objects.filter(listing=listing),
+        "status": status,
+        "listingCreator": listingCreator,
+        "no_activeListings": no_activeListings,
+        "no_inactiveListings": no_inactiveListings,
+        "no_userWatchlist": no_userWatchlist,
     })
 
 # Watchlist
@@ -180,13 +249,19 @@ def watchlist(request, listing_id):
 # User's saved watchlist
 @login_required
 def userWatchlist(request):
+    # Populate layout banners
+    info = listingInfo(request)
+    no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
+
     user = request.user
     # Get listings IDs in user's watchlist
     userWatchlist_IDs = Watchlist.objects.filter(user=user).values('listing_id')
     listings = Listing.objects.filter(id__in=userWatchlist_IDs)
-    #userlistings = Listing.watchlist.objects.all()
     return render(request, "auctions/watchlist.html", {
         "listings": listings,
+        "no_activeListings": no_activeListings,
+        "no_inactiveListings": no_inactiveListings,
+        "no_userWatchlist": no_userWatchlist,
     })
 
 # Bid
@@ -248,3 +323,41 @@ def comments(request, listing_id):
             newEntry.save()
 
         return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+
+# Close auction
+@login_required
+def closeAuction(request, listing_id):
+    if request.method=="POST":
+        Listing.objects.filter(pk=listing_id).update(status=False)
+
+        return HttpResponseRedirect(reverse("inactive"))
+
+# Categories
+class CategoryForm(forms.Form):
+    category = forms.ChoiceField(label='Category:', required=False, choices=CATEGORIES)
+
+def categories(request):
+    # Populate layout banners
+    info = listingInfo(request)
+    no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
+
+    if request.method=="POST":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            category = form.cleaned_data["category"]
+            listings = Listing.objects.filter(category=category)
+            return render(request, "auctions/categories.html", {
+                "category": category,
+                "listings": listings,
+                "no_activeListings": no_activeListings,
+                "no_inactiveListings": no_inactiveListings,
+                "no_userWatchlist": no_userWatchlist,
+            })
+
+    else:
+        return render(request, "auctions/selectCategories.html", {
+            "form": CategoryForm(),
+            "no_activeListings": no_activeListings,
+            "no_inactiveListings": no_inactiveListings,
+            "no_userWatchlist": no_userWatchlist,
+        })

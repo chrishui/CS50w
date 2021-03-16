@@ -17,8 +17,17 @@
             {% endif %}
         </div>
         <ul class="nav">
+            <!-- Active listings -->
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
+                <a class="nav-link" href="{% url 'index' %}">Active Listings ({{no_activeListings}})</a>
+            </li>
+          <!-- Inactive listings -->
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'inactive' %}">Closed Listings ({{no_inactiveListings}})</a>
+            </li>
+            <!-- Categories -->
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'selectCategories' %}">Categories</a>
             </li>
             {% if user.is_authenticated %}
                 <!-- Create listing -->
@@ -27,7 +36,7 @@
                 </li>
                 <!-- Watchlist -->
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'userWatchlist' %}">Watchlist</a>
+                  <a class="nav-link" href="{% url 'userWatchlist' %}">Watchlist ({{no_userWatchlist}})</a>
                 </li>
                 <!-- Logout -->
                 <li class="nav-item">

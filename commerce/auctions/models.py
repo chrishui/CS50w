@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.utils.translation import ugettext_lazy as _
 from django.db import models
 import datetime
 
@@ -21,6 +22,13 @@ class Listing(TimeStampMixin):
     price = models.IntegerField()
     category = models.CharField(max_length=64)
     image = models.URLField()
+    INACTIVE = False
+    ACTIVE = True
+    STATUS = (
+        (INACTIVE, _('Inactive')),
+        (ACTIVE, _('Active')),
+    )
+    status = models.BooleanField(default=True, choices=STATUS)
 
     def __str__(self):
         return f"{self.id}, {self.name}: ${self.price}."

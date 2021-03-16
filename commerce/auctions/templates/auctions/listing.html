@@ -9,27 +9,34 @@
 <br />
 <sub> Created at: {{ listing.created_at }} </sub>
 <br />
-
-<!-- Add to watchlist -->
-<form action="{% url 'watchlist' listing.id %}" method="post">
-  {% csrf_token %}
-  <!-- If listing already added to user's watchlist -->
-  {% if watchlist_check == True %}
-    <input type="submit" value="Remove from watchlist" class="btn btn-outline-primary">
-  {% endif %}
-  <!-- If listing doesn't exist in user's watchlist -->
-  {% if watchlist_check == False %}
-    <input type="submit" value="Add to watchlist" class="btn btn-outline-primary">
-  {% endif %}
-</form>
 <hr width=50%/>
 
+<!-- Add to watchlist -->
+{% if status == True %}
+  <form action="{% url 'watchlist' listing.id %}" method="post">
+    {% csrf_token %}
+    <!-- If listing already added to user's watchlist -->
+    {% if watchlist_check == True %}
+      <input type="submit" value="Remove from watchlist" class="btn btn-outline-primary">
+    {% endif %}
+    <!-- If listing doesn't exist in user's watchlist -->
+    {% if watchlist_check == False %}
+      <input type="submit" value="Add to watchlist" class="btn btn-outline-primary">
+    {% endif %}
+  </form>
+  <hr width=50%/>
+{% endif %}
+
 <!-- Current price / highest bid -->
+{% if user == highestBidder %}
+<h2><b> You are the highest bidder! </b></h2>
+{% endif %}
 <p><b> Current price / highest bid:</b> ${{currentPrice}} </p>
 <sub> {{bidCount}} bid(s) so far.</sub>
 {% if highestBidder %}
   <sub> {{highestBidder}} has the highest bidder. </sub>
 {% endif %}
+{% if status == True %}
 <form action="{% url 'placebid' listing.id %}" method="POST">
   {% csrf_token %}
   {{ bidForm.label }}
@@ -37,6 +44,7 @@
   <input type="submit" />
 </form>
 <hr width=50%/>
+{%endif%}
 
 <!-- Comments -->
 <p><b> User comments: </b></p>
@@ -51,5 +59,18 @@
     <p> {{ comment.user }} commented: {{ comment.comment }} </p>
   {% endfor %}
 </ul>
+<hr width=50%/>
+
+<!-- Close auction -->
+{% if user == listingCreator %}
+<p><b> Administrative: </b></p>
+<form action="{% url 'closeAuction' listing.id %}" method="post">
+  {% csrf_token %}
+  {% if status == True %}
+    <input type="submit" value="Close auction" class="btn btn-outline-warning">
+  {% endif %}
+</form>
+
+{% endif %}
 
 {% endblock %}
