@@ -118,6 +118,8 @@ def createListing(request):
 # Individual listing view
 class BidForm(forms.Form):
     price = forms.IntegerField(label='Submit bid ($):')
+class CommentForm(forms.Form):
+    comment = forms.CharField(label='Add comment:', widget=forms.Textarea, max_length=64)
 
 @login_required
 def listing(request, listing_id):
@@ -125,7 +127,8 @@ def listing(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
     # Watchlist
     watchlist_check = Watchlist.objects.filter(user=request.user, listing=listing).exists()
-    # Check for submitted listing bids
+
+    # Bids - Check for submitted listing bids
     bid_check = Bid.objects.filter(listing=listing).exists()
     if bid_check == True:
         currentBid = Bid.objects.get(listing=listing)
@@ -136,6 +139,7 @@ def listing(request, listing_id):
     else:
         currentPrice = listing.price
         bidCount = 0
+        highestBidder = None
 
     # Get request
     return render(request, "auctions/listing.html", {
@@ -145,6 +149,8 @@ def listing(request, listing_id):
         "bidForm": BidForm(),
         "bidCount": bidCount,
         "highestBidder": highestBidder,
+        "commentForm": CommentForm(),
+        "comments": Comment.objects.filter(listing=listing)
     })
 
 # Watchlist
@@ -224,5 +230,21 @@ def bid(request, listing_id):
                 else:
                     bidCount = Bid.objects.get(listing=listing).bidCount
                     Bid.objects.filter(listing=listing).update(bidPrice=bid, user=user, bidCount=bidCount+1)
+
+        return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+
+# Comments
+@login_required
+def comments(request, listing_id):
+    if request.method=="POST":
+        listing = Listing.objects.get(pk=listing_id)
+        user = request.user
+        # User's submitted comment
+        commentForm = CommentForm(request.POST)
+        if commentForm.is_valid():
+            comment = commentForm.cleaned_data["comment"]
+            # Create a new comment instance
+            newEntry = Comment.objects.create(user=user, listing=listing, comment=comment)
+            newEntry.save()
 
         return HttpResponseRedirect(reverse("listing", args=(listing.id,)))

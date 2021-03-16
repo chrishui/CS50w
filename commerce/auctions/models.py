@@ -42,7 +42,7 @@ class Comment(models.Model):
     comment = models.CharField(max_length=64)
 
     def __str__(self):
-        return f"Comment: {self.comment}"
+        return f"{self.user} commented: {self.comment}"
 
 # Watchlist
 class Watchlist(models.Model):

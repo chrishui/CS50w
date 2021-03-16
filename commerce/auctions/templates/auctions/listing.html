@@ -22,7 +22,7 @@
     <input type="submit" value="Add to watchlist" class="btn btn-outline-primary">
   {% endif %}
 </form>
-<br />
+<hr width=50%/>
 
 <!-- Current price / highest bid -->
 <p><b> Current price / highest bid:</b> ${{currentPrice}} </p>
@@ -36,5 +36,20 @@
   {{ bidForm }}
   <input type="submit" />
 </form>
+<hr width=50%/>
+
+<!-- Comments -->
+<p><b> User comments: </b></p>
+<form action="{% url 'comments' listing.id %}" method="post">
+  {% csrf_token %}
+  {{ commentForm.label }}
+  {{ commentForm }}
+  <input type="submit" />
+</form>
+<ul>
+  {% for comment in comments %}
+    <p> {{ comment.user }} commented: {{ comment.comment }} </p>
+  {% endfor %}
+</ul>
 
 {% endblock %}
