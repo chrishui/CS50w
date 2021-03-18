@@ -130,7 +130,6 @@ def createListing(request):
     info = listingInfo(request)
     no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
 
-    # Post request
     if request.method == "POST":
         form = ListingForm(request.POST)
         user = request.user
