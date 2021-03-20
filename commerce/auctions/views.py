@@ -177,7 +177,7 @@ class CommentForm(forms.Form):
 
 @login_required
 def listing(request, listing_id):
-    # Populate layout banners
+    # Layout banners
     info = listingInfo(request)
     no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
 
