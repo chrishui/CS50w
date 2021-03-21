@@ -248,7 +248,7 @@ def watchlist(request, listing_id):
 # User's saved watchlist
 @login_required
 def userWatchlist(request):
-    # Populate layout banners
+    # Layout banners
     info = listingInfo(request)
     no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
 
