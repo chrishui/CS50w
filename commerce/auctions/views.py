@@ -336,7 +336,7 @@ class CategoryForm(forms.Form):
     category = forms.ChoiceField(label='Category:', required=False, choices=CATEGORIES)
 
 def categories(request):
-    # Populate layout banners
+    # Layout banners
     info = listingInfo(request)
     no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
 
