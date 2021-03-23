@@ -81,7 +81,7 @@ def logout_view(request):
 
 # Register
 def register(request):
-    # Populate layout banners
+    # Layout banners
     info = listingInfo(request)
     no_activeListings, no_inactiveListings, no_userWatchlist = info[0], info[1], info[2]
 
