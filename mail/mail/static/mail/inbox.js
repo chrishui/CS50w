@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
   load_mailbox('inbox');
 });
 
+// Compose mail
 function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
@@ -25,6 +26,7 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
+// Load Mailbox
 function load_mailbox(mailbox) {
 
   // Show the mailbox and hide other views
@@ -33,36 +35,59 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  // GET request to selected mailbox
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(data => {
+
+    // Create div for each email
+    data.forEach(element => {
+      // Create div
+      const div = document.createElement('div');
+      // Div contents
+      div.innerHTML = `
+      <table id="indiv-email">
+        <tr>
+          <td id="sender">${element.sender}</td>
+          <td id="subject">${element.subject}</td>
+          <td id="timestamp">${element.timestamp}</td>
+        </tr>
+      `;
+      // Append div to emails-view
+      document.querySelector('#emails-view').append(div);
+    })
+  })
 }
 
+// Send email
 function send_email() {
-
   // Email details from user input
   const recipients = document.querySelector('#compose-recipients').value;
   const subject = document.querySelector('#compose-subject').value;
   const body = document.querySelector('#compose-body').value;
 
-  // POST request to /emails
-  fetch ('/emails', {
-    method: 'POST',
-    body: JSON.stringify({
-      recipients: recipients,
-      subject: subject,
-      body: body
+  // POST request to urls /emails route
+  fetch('/emails', {
+      method: 'POST',
+      body: JSON.stringify({
+        recipients: recipients,
+        subject: subject,
+        body: body
+      })
     })
-  })
-  .then(response => response.json())
-  .then(result => {
-    console.log(result);
-    // Display error message if there is error
-    if ('error' in result) {
-      document.querySelector('#message').innerHTML = result.error;
-    }
-    // Display successful email sent message
-    else {
-      document.querySelector('#message').innerHTML = result.message;
-    }
-  });
+    .then(response => response.json())
+    .then(result => {
+      console.log(result);
+      // Display error message if there is error
+      if ('error' in result) {
+        document.querySelector('#message').innerHTML = result.error;
+      }
+      // Load user's sent mailbox once email has been sent
+      else {
+        load_mailbox('sent');
+      }
+    });
 
   // Stop form from submitting
   return false;
