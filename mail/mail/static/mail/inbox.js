@@ -33,7 +33,7 @@ function load_mailbox(mailbox) {
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
 
-  // Show the mailbox name
+  // Show selected mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
   // GET request to selected mailbox
@@ -43,17 +43,43 @@ function load_mailbox(mailbox) {
 
     // Create div for each email
     data.forEach(element => {
+      console.log(element);
       // Create div
       const div = document.createElement('div');
-      // Div contents
-      div.innerHTML = `
-      <table id="indiv-email">
-        <tr>
-          <td id="sender">${element.sender}</td>
-          <td id="subject">${element.subject}</td>
-          <td id="timestamp">${element.timestamp}</td>
-        </tr>
-      `;
+      // Div contents for 'inbox', read emails
+      if (mailbox === 'inbox' && element.read === true){
+        div.innerHTML = `
+        <table id="indiv-email">
+          <tr style="background-color: #ffffff;">
+            <td id="sender">${element.sender}</td>
+            <td id="subject">${element.subject}</td>
+            <td id="timestamp">${element.timestamp}</td>
+          </tr>
+        `;
+      }
+      // Div contents for 'inbox', unread emails
+      else if (mailbox === 'inbox' && element.read === false){
+        div.innerHTML = `
+        <table id="indiv-email">
+          <tr style="background-color: #ddd;">
+            <td id="sender">${element.sender}</td>
+            <td id="subject">${element.subject}</td>
+            <td id="timestamp">${element.timestamp}</td>
+          </tr>
+        `;
+      }
+      // Div contents for 'sent'
+      else {
+        div.innerHTML = `
+        <table id="indiv-email">
+          <tr>
+            <td id="sender">${element.recipients}</td>
+            <td id="subject">${element.subject}</td>
+            <td id="timestamp">${element.timestamp}</td>
+          </tr>
+        `;
+      }
+
       // Append div to emails-view
       document.querySelector('#emails-view').append(div);
     })
