@@ -55,6 +55,7 @@ function load_mailbox(mailbox) {
             <td id="subject">${element.subject}</td>
             <td id="timestamp">${element.timestamp}</td>
           </tr>
+        </table>
         `;
       }
       // Div contents for 'inbox', unread emails
@@ -66,6 +67,7 @@ function load_mailbox(mailbox) {
             <td id="subject">${element.subject}</td>
             <td id="timestamp">${element.timestamp}</td>
           </tr>
+        </table>
         `;
       }
       // Div contents for 'sent'
@@ -77,6 +79,7 @@ function load_mailbox(mailbox) {
             <td id="subject">${element.subject}</td>
             <td id="timestamp">${element.timestamp}</td>
           </tr>
+        </table>
         `;
       }
 
