@@ -18,6 +18,7 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#indiv-email-view').style.display = 'none';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -31,6 +32,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#indiv-email-view').style.display = 'none';
 
   // Show selected mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -81,11 +83,8 @@ function load_mailbox(mailbox) {
         </table>
         `;
       }
-
-      // Event handler when the div is clicked on
-      div.addEventListener('click', function() {
-        console.log('This element has been clicked!')
-      });
+      // Event handler when the div is clicked, views individual email
+      div.addEventListener('click', () => check_email(element.id, mailbox));
       // Append div to emails-view
       document.querySelector('#emails-view').append(div);
     })
@@ -123,5 +122,46 @@ function send_email() {
 
   // Stop form from submitting
   return false;
+
+}
+
+// Check email
+function check_email(email_id, mailbox) {
+  // Hide mailboxs and show user's chosen email
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#indiv-email-view').style.display = 'block';
+  // GET request to selected email
+  fetch(`/emails/${email_id}`)
+  .then(response => response.json())
+  .then(email => {
+    console.log(mailbox);
+    // Clear view element
+    document.querySelector('#indiv-email-view').innerHTML = '';
+    // Create div element for email details
+    const div = document.createElement('div');
+    div.innerHTML = `
+    <p><strong>From:</strong>${email.sender}</p>
+    <p><strong>To:</strong>${email.recipients}</p>
+    <p><strong>Subject:</strong>${email.subject}</p>
+    <p><strong>Timestamp:</strong>${email.timestamp}</p>
+    <hr>
+    <p>${email.body}</p>
+    `;
+    document.querySelector('#indiv-email-view').append(div);
+    // Archive button for 'inbox' emails
+    if (mailbox === 'inbox') {
+      var buttonDiv = document.createElement('div');
+      buttonDiv.innerHTML = `<button class="btn btn-sm btn-outline-primary">Archive</button>`;
+      document.querySelector('#indiv-email-view').append(buttonDiv);
+    }
+  })
+  // Mark email as read
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      read: true
+    })
+  })
 
 }
