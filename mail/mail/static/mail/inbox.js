@@ -131,11 +131,12 @@ function check_email(email_id, mailbox) {
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#indiv-email-view').style.display = 'block';
+
   // GET request to selected email
   fetch(`/emails/${email_id}`)
   .then(response => response.json())
   .then(email => {
-    console.log(mailbox);
+
     // Clear view element
     document.querySelector('#indiv-email-view').innerHTML = '';
     // Create div element for email details
@@ -148,14 +149,50 @@ function check_email(email_id, mailbox) {
     <hr>
     <p>${email.body}</p>
     `;
+    // Append indiviudal email div view
     document.querySelector('#indiv-email-view').append(div);
-    // Archive button for 'inbox' emails
-    if (mailbox === 'inbox') {
+
+    // Archive button for 'inbox' or 'archive' emails
+    if (mailbox === 'inbox' || mailbox === 'archive') {
       var buttonDiv = document.createElement('div');
-      buttonDiv.innerHTML = `<button class="btn btn-sm btn-outline-primary">Archive</button>`;
+
+      // if email is not archived
+      if (email.archived === false) {
+        buttonDiv.innerHTML = `<button class="btn btn-sm btn-outline-primary">Archive</button>`;
+        // Event handler when the button is clicked, archive email
+        buttonDiv.addEventListener('click', () => {
+          fetch(`/emails/${email_id}`,{
+            method: 'PUT',
+            body: JSON.stringify({
+              archived: true
+            })
+          })
+          // Load user's inbox
+          load_mailbox('inbox');
+        });
+      }
+
+      // if email is archived
+      else if (email.archived === true) {
+        buttonDiv.innerHTML = `<button class="btn btn-sm btn-outline-primary">Unarchive</button>`;
+        // Event handler when the button is clicked, archive email
+        buttonDiv.addEventListener('click', () => {
+          fetch(`/emails/${email_id}`,{
+            method: 'PUT',
+            body: JSON.stringify({
+              archived: false
+            })
+          })
+          // Load user's inbox
+          load_mailbox('inbox');
+        });
+      }
+
+      // Append 'Archive' button
       document.querySelector('#indiv-email-view').append(buttonDiv);
     }
   })
+
   // Mark email as read
   fetch(`/emails/${email_id}`, {
     method: 'PUT',
@@ -163,5 +200,4 @@ function check_email(email_id, mailbox) {
       read: true
     })
   })
-
 }
