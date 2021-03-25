@@ -1,3 +1,30 @@
 textarea {
     min-height: 400px;
 }
+
+table {
+  width: 100%;
+  border: 1px solid;
+}
+
+td, tr {
+  padding: 10px;
+}
+
+#sender {
+  text-align: left;
+  width: 30%;
+  font-weight: bold;
+}
+
+#subject {
+  text-align: left;
+  width: 45%;
+  font-weight: normal;
+}
+
+#timestamp {
+  text-align: right;
+  width: 25%;
+  font-weight: lighter;
+}

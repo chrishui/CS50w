@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Send email
   document.querySelector('#compose-form').onsubmit = send_email;
 
-
   // By default, load the inbox
   load_mailbox('inbox');
 });
@@ -50,12 +49,12 @@ function load_mailbox(mailbox) {
       if (mailbox === 'inbox' && element.read === true){
         div.innerHTML = `
         <table id="indiv-email">
-          <tr style="background-color: #ffffff;">
-            <td id="sender">${element.sender}</td>
-            <td id="subject">${element.subject}</td>
-            <td id="timestamp">${element.timestamp}</td>
-          </tr>
-        </table>
+            <tr style="background-color: #ffffff;">
+              <td id="sender">${element.sender}</td>
+              <td id="subject">${element.subject}</td>
+              <td id="timestamp">${element.timestamp}</td>
+            </tr>
+          </table>
         `;
       }
       // Div contents for 'inbox', unread emails
@@ -83,6 +82,10 @@ function load_mailbox(mailbox) {
         `;
       }
 
+      // Event handler when the div is clicked on
+      div.addEventListener('click', function() {
+        console.log('This element has been clicked!')
+      });
       // Append div to emails-view
       document.querySelector('#emails-view').append(div);
     })
