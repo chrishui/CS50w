@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#compose').addEventListener('click', () => compose_email());
 
   // Send email
   document.querySelector('#compose-form').onsubmit = send_email;
@@ -13,17 +13,34 @@ document.addEventListener('DOMContentLoaded', function() {
   load_mailbox('inbox');
 });
 
-// Compose mail
-function compose_email() {
+// Compose email
+function compose_email(email_id) {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#indiv-email-view').style.display = 'none';
 
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  // To compose email
+  if (email_id === null) {
+    // Clear out composition fields
+    document.querySelector('#compose-recipients').value = '';
+    document.querySelector('#compose-subject').value = '';
+    document.querySelector('#compose-body').value = '';
+  }
+
+  // To reply email
+  else if (email_id) {
+    // Get request for email info user will reply to
+    fetch(`/emails/${email_id}`)
+    .then(response => response.json())
+    .then(email => {
+      console.log('look email:'+`${email.sender}`);
+      // TODO
+    });
+
+
+
+  }
 }
 
 // Load Mailbox
@@ -64,6 +81,18 @@ function load_mailbox(mailbox) {
         div.innerHTML = `
         <table id="indiv-email">
           <tr style="background-color: #ddd;">
+            <td id="sender">${element.sender}</td>
+            <td id="subject">${element.subject}</td>
+            <td id="timestamp">${element.timestamp}</td>
+          </tr>
+        </table>
+        `;
+      }
+      // Div contents for 'archive', unread emails
+      else if (mailbox === 'archive'){
+        div.innerHTML = `
+        <table id="indiv-email">
+          <tr>
             <td id="sender">${element.sender}</td>
             <td id="subject">${element.subject}</td>
             <td id="timestamp">${element.timestamp}</td>
@@ -188,8 +217,14 @@ function check_email(email_id, mailbox) {
         });
       }
 
-      // Append 'Archive' button
+      // 'Reply' button, redirects to compose email
+      const replyButtonDiv = document.createElement('div');
+      replyButtonDiv.innerHTML = `<button class="btn btn-sm btn-outline-primary">Reply</button>`;
+      replyButtonDiv.addEventListener('click', () => { compose_email(email_id)});
+
+      // Append 'Archive' and 'Reply' buttons
       document.querySelector('#indiv-email-view').append(buttonDiv);
+      document.querySelector('#indiv-email-view').append(replyButtonDiv);
     }
   })
 
