@@ -34,12 +34,19 @@ function compose_email(email_id) {
     fetch(`/emails/${email_id}`)
     .then(response => response.json())
     .then(email => {
-      console.log('look email:'+`${email.sender}`);
-      // TODO
+      console.log(`${email.subject}`)
+      // Pre-populate recipient field
+      document.querySelector('#compose-recipients').value = `${email.sender}`;
+      // Pre-populate 'RE:' in subject field
+      if (`${email.subject}`.includes("RE:")) {
+        document.querySelector('#compose-subject').value =  `${email.subject}`;
+      }
+      else {
+        document.querySelector('#compose-subject').value = `'RE: ${email.subject}'`;
+      }
+      // Pre-populate body field
+      document.querySelector('#compose-body').value = `\n'On ${email.timestamp}' ${email.sender} wrote: ${email.body}`;
     });
-
-
-
   }
 }
 

@@ -11,9 +11,11 @@
     <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
     <hr>
 
+    <!-- Mailbox -->
     <div id="emails-view">
     </div>
 
+    <!-- Compose email -->
     <div id="compose-view">
         <h3>New Email</h3>
         <form id="compose-form">
@@ -31,6 +33,10 @@
         </form>
         <p id="message"></p>
     </div>
+
+    <!-- Email -->
+    <div id="indiv-email-view">
+      </div>
 {% endblock %}
 
 {% block script %}
