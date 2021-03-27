@@ -208,7 +208,7 @@ function check_email(email_id, mailbox) {
         });
       }
 
-      // if email is archived
+      // Else if email is archived
       else if (email.archived === true) {
         buttonDiv.innerHTML = `<button class="btn btn-sm btn-outline-primary">Unarchive</button>`;
         // Event handler when the button is clicked, archive email
