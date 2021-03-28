@@ -66,7 +66,7 @@ function load_mailbox(mailbox) {
   .then(response => response.json())
   .then(data => {
 
-    // Create div for each email
+    // Create 'div' for each email
     data.forEach(element => {
       console.log(element);
       // Create div
