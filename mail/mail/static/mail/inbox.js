@@ -188,7 +188,7 @@ function check_email(email_id, mailbox) {
     // Append indiviudal email div view
     document.querySelector('#indiv-email-view').append(div);
 
-    // Archive button for 'inbox' or 'archive' emails
+    // Archive button for 'inbox' or 'archive' mailboxes
     if (mailbox === 'inbox' || mailbox === 'archive') {
       var buttonDiv = document.createElement('div');
 
