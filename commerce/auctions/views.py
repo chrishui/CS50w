@@ -116,7 +116,7 @@ def register(request):
 
 # Create Listing
 CATEGORIES = (("Fashion","Fashion"), ("Toys", "Toys"), ("Electronics", "Electronics"), ("Home", "Home"), ("Misc.", "Misc."),)
-# Forms
+# Listing forms
 class ListingForm(forms.Form):
     name = forms.CharField(label='Listing name:', max_length = 64)
     description = forms.CharField(label='Description:', widget=forms.Textarea, max_length = 64)
