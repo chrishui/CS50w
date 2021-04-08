@@ -69,7 +69,7 @@ function load_mailbox(mailbox) {
     // Create 'div' for each email
     data.forEach(element => {
       console.log(element);
-      // Create div
+      // Create 'div'
       const div = document.createElement('div');
       // Div contents for 'inbox', read emails
       if (mailbox === 'inbox' && element.read === true){
