@@ -71,7 +71,7 @@ function load_mailbox(mailbox) {
       console.log(element);
       // Create 'div'
       const div = document.createElement('div');
-      // Div contents for 'inbox', read emails
+      // Div contents for 'inbox', and read emails
       if (mailbox === 'inbox' && element.read === true){
         div.innerHTML = `
         <table id="indiv-email">
