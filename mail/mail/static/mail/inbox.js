@@ -28,7 +28,7 @@ function compose_email(email_id) {
     document.querySelector('#compose-body').value = '';
   }
 
-  // To reply to email
+  // To reply email
   else if (email_id) {
     // Get request for email info user will reply to
     fetch(`/emails/${email_id}`)
