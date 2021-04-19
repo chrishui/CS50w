@@ -22,7 +22,7 @@ def listingInfo(request):
         no_userWatchlist = None
     return no_activeListings, no_inactiveListings, no_userWatchlist
 
-# Main page (Active listings)
+# Main page - (Active listings)
 def index(request):
     # Populate layout banners
     info = listingInfo(request)
