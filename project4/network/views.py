@@ -91,9 +91,10 @@ def index(request):
                 "form": form,
             })
 
+    #posts = Post.objects.all()
     # Get request
     return render(request, "network/index.html", {
         "form": PostForm(),
-        "posts": Post.objects
+        "posts": Post.objects.all(),
         # Need to add all posts
     })
