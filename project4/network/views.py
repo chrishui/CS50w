@@ -66,6 +66,11 @@ class PostForm(forms.Form):
 
 # Index / all posts
 def index(request):
+    # Display posts chronologically (newest first)
+    posts_chronological = []
+    for object in Post.objects.all():
+        posts_chronological.insert(0,object)
+
     # Create new post (Note: requres user to be authenticated)
     if request.method == "POST":
         form = PostForm(request.POST)
@@ -83,6 +88,7 @@ def index(request):
             return render(request, "network/index.html", {
                 "form": PostForm(),
                 "message": "Post created!",
+                "posts": posts_chronological,
             })
 
         # If submitted form is Invalid
@@ -91,10 +97,11 @@ def index(request):
                 "form": form,
             })
 
-    #posts = Post.objects.all()
     # Get request
     return render(request, "network/index.html", {
         "form": PostForm(),
-        "posts": Post.objects.all(),
-        # Need to add all posts
+        "posts": posts_chronological,
     })
+
+# Profile
+# TODO

@@ -20,3 +20,7 @@ class Post(TimeStampMixin):
 
     def __str__(self):
         return f"{self.id}, {self.user}: ${self.content}."
+
+# Profile
+class Profile(models.Model):
+    # TODO
