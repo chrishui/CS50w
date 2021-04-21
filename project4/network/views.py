@@ -1,15 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
 
 from .models import User
-
-
-def index(request):
-    return render(request, "network/index.html")
-
+from .models import *
 
 def login_view(request):
     if request.method == "POST":
@@ -61,3 +59,41 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+# Create Post
+class PostForm(forms.Form):
+    content = forms.CharField(label='', max_length=64, widget=forms.Textarea)
+
+# Index / all posts
+def index(request):
+    # Create new post (Note: requres user to be authenticated)
+    if request.method == "POST":
+        form = PostForm(request.POST)
+        user = request.user
+
+        # Check if submitted form is valid
+        if form.is_valid():
+            content = form.cleaned_data["content"]
+
+            # Create a new post instance
+            newEntry = Post.objects.create(user=user, content=content)
+            newEntry.save()
+
+            # Return index page with message confirmation (?)
+            return render(request, "network/index.html", {
+                "form": PostForm(),
+                "message": "Post created!",
+            })
+
+        # If submitted form is Invalid
+        else:
+            return render(request, "network/index.html", {
+                "form": form,
+            })
+
+    # Get request
+    return render(request, "network/index.html", {
+        "form": PostForm(),
+        "posts": Post.objects
+        # Need to add all posts
+    })
