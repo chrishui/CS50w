@@ -108,5 +108,14 @@ def index(request):
 def profile(request):
     user = request.user
     # Get post IDs from posts posted by user
-    post_IDs = Post.objects.filter(user=user).values('post_id')
-    
+    #post_IDs = Post.objects.filter(user=user).values('post_id')
+
+    # Display posts chronologically (newest first), posted by user
+    posts_chronological = []
+    for object in Post.objects.filter(user=user):
+        posts_chronological.insert(0,object)
+
+    # Get request
+    return render(request, "network/profile.html", {
+        "posts": posts_chronological,
+    })

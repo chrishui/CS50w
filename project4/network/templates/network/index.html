@@ -2,7 +2,7 @@
 
 {% block body %}
     <h2>All Posts</h2>
-    <!-- Form for user to submit Posts -->
+    <!-- Form for user to submit a post -->
     {% if user.is_authenticated %}
       <form action="{% url 'index' %}" method="post">
         {% csrf_token %}
