@@ -104,4 +104,9 @@ def index(request):
     })
 
 # Profile
-# TODO
+@login_required
+def profile(request):
+    user = request.user
+    # Get post IDs from posts posted by user
+    post_IDs = Post.objects.filter(user=user).values('post_id')
+    
