@@ -24,10 +24,8 @@ class Post(TimeStampMixin):
 # Profile
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # Can remove post below?
-    # post = models.ManyToManyField(Post, blank=True)
     following = models.ManyToManyField(User, blank=True, related_name="following")
     followers = models.ManyToManyField(User, blank=True, related_name="followers")
 
     def __str__(self):
-        return f"{self.user}'s profile"
+        return f"{self.user}'s following / followers"

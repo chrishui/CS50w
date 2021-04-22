@@ -104,11 +104,9 @@ def index(request):
     })
 
 # Profile
-@login_required
-def profile(request):
-    user = request.user
-    # Get post IDs from posts posted by user
-    #post_IDs = Post.objects.filter(user=user).values('post_id')
+def profile(request, user_id):
+    # Get User object from user id
+    user = User.objects.get(id=user_id)
 
     # Display posts chronologically (newest first), posted by user
     posts_chronological = []
