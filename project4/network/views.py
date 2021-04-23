@@ -122,11 +122,19 @@ def profile(request, user_id):
     # Check whether target user is followed/not followed by user
     following_check = Profile.objects.filter(user=user, following=target_user).exists()
 
+    # Display target user's number of ...
+    # following:
+    following_count = len(Profile.objects.filter(user=target_user).values('following'))
+    # followers:
+    followers_count = len(Profile.objects.filter(user=target_user).values('followers'))
+
     # Get request
     return render(request, "network/profile.html", {
         "posts": posts_chronological,
         "profile": target_user,
         "following_check": following_check,
+        "following_count": following_count,
+        "followers_count": followers_count,
     })
 
 # follow/unfollow
@@ -147,12 +155,10 @@ def follow(request, user_id):
         if already_exist:
             user_profile.following.remove(target_user)
             targetuser_profile.followers.remove(user)
-            # also need to add follower (TODO)
 
         # Else, follow target user
         else:
             user_profile.following.add(target_user)
             targetuser_profile.followers.add(user)
-            # also need to add follower (TODO)
 
         return HttpResponseRedirect(reverse("profile", args=(target_user.id,)))

@@ -2,9 +2,10 @@
 
 {% block body %}
 
-  <h2> {{ profile.username }}'s posts</h2>
+  <h2> {{ profile.username }}'s profile</h2>
   <!-- Display user's no. of followers and following -->
-  
+  <p> Followers: {{followers_count}}</p>
+  <p> Following: {{following_count}}</p>
 
 
   <!-- Hide follow/unfollow button if user visiting own profile -->
