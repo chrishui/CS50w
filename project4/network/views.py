@@ -51,6 +51,9 @@ def register(request):
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
+            # Create user profile, to track following/followers
+            profile = Profile.objects.create(user=user)
+            profile.save()
         except IntegrityError:
             return render(request, "network/register.html", {
                 "message": "Username already taken."
@@ -106,15 +109,47 @@ def index(request):
 # Profile
 def profile(request, user_id):
     # Get User object from user id
-    user = User.objects.get(id=user_id)
+    target_user = User.objects.get(id=user_id)
+
+    # Logged in user
+    user = request.user
 
     # Display posts chronologically (newest first), posted by user
     posts_chronological = []
-    for object in Post.objects.filter(user=user):
+    for object in Post.objects.filter(user=target_user):
         posts_chronological.insert(0,object)
+
+    # Check whether target user is followed/not followed by user
+    following_check = Profile.objects.filter(user=user, following=target_user).exists()
 
     # Get request
     return render(request, "network/profile.html", {
         "posts": posts_chronological,
-        "profile": user,
+        "profile": target_user,
+        "following_check": following_check,
     })
+
+# follow/unfollow
+def follow(request, user_id):
+    if request.method == "POST":
+        # Get target user's User object from user id
+        target_user = User.objects.get(id=user_id)
+
+        # Logged in user
+        user = request.user
+        user_profile = Profile.objects.get(user=user)
+
+        # Check if logged in user is already following target user
+        already_exist = Profile.objects.filter(user=user, following=target_user).exists()
+
+        # If already exist, remove from following
+        if already_exist:
+            user_profile.following.remove(target_user)
+            # also need to add follower (TODO)
+
+        # Else, follow target user
+        else:
+            user_profile.following.add(target_user)
+            # also need to add follower (TODO)
+
+        return HttpResponseRedirect(reverse("profile", args=(target_user.id,)))
