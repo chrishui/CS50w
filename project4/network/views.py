@@ -134,6 +134,7 @@ def follow(request, user_id):
     if request.method == "POST":
         # Get target user's User object from user id
         target_user = User.objects.get(id=user_id)
+        targetuser_profile = Profile.objects.get(user=target_user)
 
         # Logged in user
         user = request.user
@@ -145,11 +146,13 @@ def follow(request, user_id):
         # If already exist, remove from following
         if already_exist:
             user_profile.following.remove(target_user)
+            targetuser_profile.followers.remove(user)
             # also need to add follower (TODO)
 
         # Else, follow target user
         else:
             user_profile.following.add(target_user)
+            targetuser_profile.followers.add(user)
             # also need to add follower (TODO)
 
         return HttpResponseRedirect(reverse("profile", args=(target_user.id,)))

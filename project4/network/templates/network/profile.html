@@ -4,6 +4,7 @@
 
   <h2> {{ profile.username }}'s posts</h2>
 
+  <!-- TODO hide button if user visiting own profile -->
   <!-- Add follow user button -->
   <form action="{% url 'follow' profile.id %}" method="post">
     {% csrf_token %}
