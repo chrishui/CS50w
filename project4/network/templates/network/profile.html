@@ -3,20 +3,25 @@
 {% block body %}
 
   <h2> {{ profile.username }}'s posts</h2>
+  <!-- Display user's no. of followers and following -->
+  
 
-  <!-- TODO hide button if user visiting own profile -->
-  <!-- Add follow user button -->
-  <form action="{% url 'follow' profile.id %}" method="post">
-    {% csrf_token %}
-    <!-- If user is not following target user -->
-    {% if following_check == False %}
-      <input type="submit" value="Follow" class="btn btn-outline-primary" />
-    {% endif %}
-    <!-- If user is already following target user -->
-    {% if following_check == True %}
-      <input type="submit" value="Unfollow" class="btn btn-outline-primary" />
-    {% endif %}
-  </form>
+
+  <!-- Hide follow/unfollow button if user visiting own profile -->
+  {% if user.id != profile.id %}
+    <!-- Follow/unfollow user button -->
+    <form action="{% url 'follow' profile.id %}" method="post">
+      {% csrf_token %}
+      <!-- If user is not following target user -->
+      {% if following_check == False %}
+        <input type="submit" value="Follow" class="btn btn-outline-primary" />
+      {% endif %}
+      <!-- If user is already following target user -->
+      {% if following_check == True %}
+        <input type="submit" value="Unfollow" class="btn btn-outline-primary" />
+      {% endif %}
+    </form>
+  {% endif %}
 
   <!-- Display this user's submitted posts -->
   {% for post in posts %}
