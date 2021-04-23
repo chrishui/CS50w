@@ -116,4 +116,5 @@ def profile(request, user_id):
     # Get request
     return render(request, "network/profile.html", {
         "posts": posts_chronological,
+        "profile": user,
     })
