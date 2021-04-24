@@ -1,0 +1,15 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+  <h2> Following user's posts </h2>
+
+  {% for post in posts %}
+    <div class="border" style="margin: 10px; padding: 10px;">
+      <p>User:  <a href="{% url 'profile' post.user.id %}"> {{ post.user }} </a></p>
+      <p> {{ post.content }} </p>
+      <sub> {{ post.created_at }}</sub>
+    </div>
+  {% endfor %}
+
+
+{% endblock %}

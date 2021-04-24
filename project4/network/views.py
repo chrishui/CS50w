@@ -137,7 +137,7 @@ def profile(request, user_id):
         "followers_count": followers_count,
     })
 
-# follow/unfollow
+# Follow/unfollow
 def follow(request, user_id):
     if request.method == "POST":
         # Get target user's User object from user id
@@ -162,3 +162,28 @@ def follow(request, user_id):
             targetuser_profile.followers.add(user)
 
         return HttpResponseRedirect(reverse("profile", args=(target_user.id,)))
+
+# Following users' posts
+@login_required
+def following(request):
+    # Logged in user
+    user = request.user
+
+    # Obtain logged in user's list of following users' posts
+    following_users = Profile.objects.filter(user=user).values_list('following')
+    following_posts = []
+    for profile in following_users:
+        posts = Post.objects.filter(user=profile)
+        for post in posts:
+            following_posts.insert(0,post)
+
+    # def myFunc(e):
+    #     return e['-created_at']
+
+    # following_posts.sort(key=myFunc)
+
+    # TODO - sort posts by creation date
+
+    return render(request, "network/following.html", {
+        "posts": following_posts,
+    })
