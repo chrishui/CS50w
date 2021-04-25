@@ -182,7 +182,7 @@ def following(request):
 
     # following_posts.sort(key=myFunc)
 
-    # TODO - sort posts by creation date
+    # TODO - sort posts by creation date?
 
     return render(request, "network/following.html", {
         "posts": following_posts,
