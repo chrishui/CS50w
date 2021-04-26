@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
+from django.core.paginator import Paginator
 
 from .models import User
 from .models import *
@@ -70,9 +71,12 @@ class PostForm(forms.Form):
 # Index / all posts
 def index(request):
     # Display posts chronologically (newest first)
-    posts_chronological = []
-    for object in Post.objects.all():
-        posts_chronological.insert(0,object)
+    posts_chronological = Post.objects.order_by('-created_at')
+
+    # Paginator, limit to 10 entries per page
+    paginator = Paginator(posts_chronological, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     # Create new post (Note: requres user to be authenticated)
     if request.method == "POST":
@@ -104,6 +108,7 @@ def index(request):
     return render(request, "network/index.html", {
         "form": PostForm(),
         "posts": posts_chronological,
+        "page_obj": page_obj,
     })
 
 # Profile
@@ -176,13 +181,6 @@ def following(request):
         posts = Post.objects.filter(user=profile)
         for post in posts:
             following_posts.insert(0,post)
-
-    # def myFunc(e):
-    #     return e['-created_at']
-
-    # following_posts.sort(key=myFunc)
-
-    # TODO - sort posts by creation date?
 
     return render(request, "network/following.html", {
         "posts": following_posts,
