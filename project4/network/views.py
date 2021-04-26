@@ -95,7 +95,7 @@ def index(request):
             return render(request, "network/index.html", {
                 "form": PostForm(),
                 "message": "Post created!",
-                "posts": posts_chronological,
+                "page_obj": page_obj,
             })
 
         # If submitted form is Invalid
@@ -107,7 +107,7 @@ def index(request):
     # Get request
     return render(request, "network/index.html", {
         "form": PostForm(),
-        "posts": posts_chronological,
+        #"posts": posts_chronological,
         "page_obj": page_obj,
     })
 
