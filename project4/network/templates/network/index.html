@@ -1,4 +1,5 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
     <h2>All Posts</h2>
@@ -16,6 +17,13 @@
       </form>
     {% endif %}
 
+    <!-- Test area -->
+    <button class="btn btn-sm btn-outline-primary" id="test">Test</button>
+    <div id="test">
+      </div>
+    <h3 id="counter-test">0</h3>
+    <button id="button-test">Count</button>
+
     <!-- Display all users' submitted posts -->
     {% for post in page_obj %}
       <div class="border" style="margin: 10px; padding: 10px;">
@@ -26,8 +34,16 @@
 
         <!-- Edit posts, for logged in user's posts -->
         {% if user == post.user %}
-          <button class="btn btn-sm btn-outline-primary" id="edit"> Edit </button>
+          <button class="btn btn-sm btn-outline-primary" id="editor">Editor</button>
         {% endif %}
+
+        <!-- Post editor -->
+        <div id="editor-view">
+          <form id="editor-form">
+            <textarea class="form-control" id="compose-body" placeholder="test"></textarea>
+            <input type="submit" class="btn btn-primary" />
+          </form>
+        </div>
 
       </div>
     {% endfor %}
@@ -124,4 +140,8 @@
       </ul>
     </nav>
 
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/post.js' %}"></script>
 {% endblock %}
