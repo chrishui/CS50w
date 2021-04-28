@@ -22,6 +22,13 @@
         <p>User:  <a href="{% url 'profile' post.user.id %}"> {{ post.user }} </a></p>
         <p> {{ post.content }} </p>
         <sub> {{ post.created_at }}</sub>
+        <br />
+
+        <!-- Edit posts, for logged in user's posts -->
+        {% if user == post.user %}
+          <button class="btn btn-sm btn-outline-primary" id="edit"> Edit </button>
+        {% endif %}
+
       </div>
     {% endfor %}
 
