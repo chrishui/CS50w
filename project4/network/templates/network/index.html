@@ -18,11 +18,8 @@
     {% endif %}
 
     <!-- Test area -->
-    <button class="btn btn-sm btn-outline-primary" id="test">Test</button>
-    <div id="test">
-      </div>
-    <h3 id="counter-test">0</h3>
-    <button id="button-test">Count</button>
+    <h1 id="test">0</h1>
+    <button id="test-count"> Count </button>
 
     <!-- Display all users' submitted posts -->
     {% for post in page_obj %}
@@ -34,7 +31,7 @@
 
         <!-- Edit posts, for logged in user's posts -->
         {% if user == post.user %}
-          <button class="btn btn-sm btn-outline-primary" id="editor">Editor</button>
+          <button class="btn btn-sm btn-outline-primary" id="editor">Edit post</button>
         {% endif %}
 
         <!-- Post editor -->
