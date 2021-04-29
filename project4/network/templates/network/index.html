@@ -17,53 +17,27 @@
       </form>
     {% endif %}
 
-    <!-- Test area -->
-    <h1 id="test">0</h1>
-    <button id="test-count"> Count </button>
-
     <!-- Display all users' submitted posts -->
     {% for post in page_obj %}
       <div class="border" style="margin: 10px; padding: 10px;">
         <p>User:  <a href="{% url 'profile' post.user.id %}"> {{ post.user }} </a></p>
-        <p> {{ post.content }} </p>
+        <div id="post-{{post.id}}"> {{ post.content }} </div>
         <sub> {{ post.created_at }}</sub>
         <br />
 
         <!-- Edit posts, for logged in user's posts -->
         {% if user == post.user %}
-          <button class="btn btn-sm btn-outline-primary" id="editor">Edit post</button>
+          <div id="edit" onclick="edit('{{ post.id }}')" class="text-primary">Edit</div>
         {% endif %}
 
         <!-- Post editor -->
-        <div id="editor-view">
-          <form id="editor-form">
-            <textarea class="form-control" id="compose-body" placeholder="test"></textarea>
-            <input type="submit" class="btn btn-primary" />
-          </form>
-        </div>
+        <textarea class="form-control mb-2" id="edit-box-{{post.id}}" name="edit-box" style="display:none;"></textarea>
+        <button id="edit-btn-{{post.id}}" class="btn btn-primary" style="display:none;">Save</button>
 
       </div>
     {% endfor %}
 
     <!-- Pagination - 10 posts per page -->
-    <!-- <div class="pagination">
-      <span class="step-links">
-          {% if page_obj.has_previous %}
-              <a href="?page=1">&laquo; first</a>
-              <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-          {% endif %}
-
-          <span class="current">
-              Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-          </span>
-
-          {% if page_obj.has_next %}
-              <a href="?page={{ page_obj.next_page_number }}">next</a>
-              <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-          {% endif %}
-      </span>
-    </div> -->
-
     <nav aria-label="pagination">
       <ul class="pagination">
 
@@ -142,3 +116,24 @@
 {% block script %}
     <script src="{% static 'network/post.js' %}"></script>
 {% endblock %}
+
+<!-- Reference: -->
+<!-- Pagination - 10 posts per page -->
+
+<!-- <div class="pagination">
+  <span class="step-links">
+      {% if page_obj.has_previous %}
+          <a href="?page=1">&laquo; first</a>
+          <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+      {% endif %}
+
+      <span class="current">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+      </span>
+
+      {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">next</a>
+          <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+      {% endif %}
+  </span>
+</div> -->

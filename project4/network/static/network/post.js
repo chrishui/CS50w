@@ -1,27 +1,23 @@
-document.addEventListener('DOMContentLoaded', function() {
-  // Test
-  document.querySelector('#test-count').onclick = count;
+// Edit posts
+function edit(post_id) {
+  var edit_box = document.querySelector(`#edit-box-${post_id}`);
+  var edit_btn = document.querySelector(`#edit-btn-${post_id}`);
+  edit_box.style.display = 'block';
+  edit_btn.style.display = 'block';
 
-  // Hide editor by default?
-  // document.querySelector('#editor-view').style.display = 'none';
+  // PUT request
+  edit_btn.addEventListener('click', () => {
+    fetch(`/edit/${post_id}`,{
+      method: 'PUT',
+      body: JSON.stringify({
+        content: edit_box.value
+      })
+    })
+    edit_box.style.display = 'none';
+    edit_btn.style.display = 'none';
 
-  // Use button to toggle post view
-  // TODO
-  document.querySelector('#editor').addEventListener('click', () => load_editor());
+    document.querySelector(`#post-${post_id}`).innerHTML = edit_box.value;
 
-});
+  });
 
-// Test
-let counter = 0;
-function count() {
-  counter++;
-  document.querySelector('#test').innerHTML = counter;
 }
-
-// Post editor
-// TODO
-function load_editor() {
-  document.querySelector('#editor-view').style.display = 'block';
-}
-
-// Display posts

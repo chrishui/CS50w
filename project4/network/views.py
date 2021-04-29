@@ -1,11 +1,13 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import HttpResponse, HttpResponseRedirect, render
 from django.urls import reverse
 from django import forms
 from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User
 from .models import *
@@ -185,3 +187,22 @@ def following(request):
     return render(request, "network/following.html", {
         "posts": following_posts,
     })
+
+# API routes
+# Edit posts
+@csrf_exempt
+@login_required
+def edit(request, post_id):
+    post = Post.objects.get(id=post_id)
+
+    # Update post's content
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        if data.get("content") is not None:
+            post.content = data["content"]
+        post.save()
+        return HttpResponse(status=204)
+
+    # Request must be PUT
+    else:
+        return JsonResponse({"error": "PUT request required."}, status=400)
