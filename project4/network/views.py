@@ -206,27 +206,59 @@ def edit(request, post_id):
     else:
         return JsonResponse({"error": "PUT request required."}, status=400)
 
-# Like / unlike posts
+# Like/unlike posts
 @csrf_exempt
 @login_required
-def liked(request, post_id):
+def like(request, post_id):
+
+    # Request must be via POST
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=401)
+
     user = request.user
     post = Post.objects.get(id=post_id)
 
-    # Update post's likes
-    if request.method == "POST":
-        already_exist = Post.objects.filter(post=post_id, liked_by=user).exists()
+    already_exists = Like.objects.filter(user=user, post=post).exists()
 
-        # Unlike post
-        if already_exist:
-            post.liked_by.remove(user)
-            return HttpResponse(status=204)
-
-        # Like post
-        else:
-            post.liked_by.add(user)
-            return HttpResponse(status=204)
-
-    # Request must be via PUT
+    # If user has previously liked the post
+    if already_exists:
+        liked = Like.objects.get(user=user, post=post)
+        liked.delete()
+        return JsonResponse({"message": "Unliked"}, status=201)
+    # If user has not liked the post
     else:
-        return JsonResponse({"error": "PUT request required"}, status=400)
+        like = Like.objects.create(user=user, post=post)
+        like.save()
+        return JsonResponse({"message": "Liked"}, status=201)
+
+
+
+
+
+
+
+
+# Like / unlike posts
+# @csrf_exempt
+# @login_required
+# def liked(request, post_id):
+#     user = request.user
+#     post = Post.objects.get(id=post_id)
+#
+#     # Update post's likes
+#     if request.method == "POST":
+#         already_exist = Post.objects.filter(post=post_id, liked_by=user).exists()
+#
+#         # Unlike post
+#         if already_exist:
+#             post.liked_by.remove(user)
+#             return JsonResponse({"ul":"Post unliked"}, status=204)
+#
+#         # Like post
+#         else:
+#             post.liked_by.add(user)
+#             return JsonResponse({"li":"Post liked"}, status=204)
+#
+#     # Request must be via PUT
+#     else:
+#         return JsonResponse({"error": "PUT request required"}, status=400)
