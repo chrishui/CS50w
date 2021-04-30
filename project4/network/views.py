@@ -109,7 +109,6 @@ def index(request):
     # Get request
     return render(request, "network/index.html", {
         "form": PostForm(),
-        #"posts": posts_chronological,
         "page_obj": page_obj,
     })
 
@@ -208,3 +207,26 @@ def edit(request, post_id):
         return JsonResponse({"error": "PUT request required."}, status=400)
 
 # Like / unlike posts
+@csrf_exempt
+@login_required
+def liked(request, post_id):
+    user = request.user
+    post = Post.objects.get(id=post_id)
+
+    # Update post's likes
+    if request.method == "POST":
+        already_exist = Post.objects.filter(post=post_id, liked_by=user).exists()
+
+        # Unlike post
+        if already_exist:
+            post.liked_by.remove(user)
+            return HttpResponse(status=204)
+
+        # Like post
+        else:
+            post.liked_by.add(user)
+            return HttpResponse(status=204)
+
+    # Request must be via PUT
+    else:
+        return JsonResponse({"error": "PUT request required"}, status=400)

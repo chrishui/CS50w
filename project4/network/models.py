@@ -17,6 +17,8 @@ class TimeStampMixin(models.Model):
 class Post(TimeStampMixin):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length = 64)
+    # below ok?
+    liked_by = models.ManyToManyField(User, blank=True, related_name="liked_by")
 
     def __str__(self):
         return f"{self.id}, {self.user}: ${self.content}."
@@ -29,12 +31,3 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user}'s following / followers"
-
-# Like / unlike
-class Like(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    like = models.ManyToManyField(Post, blank=True, related_name="like")
-
-    def __str__(self):
-        # Count number of likes below?
-        return f"{self.post}, likes: "

@@ -12,5 +12,6 @@ class ProfileAdmin(admin.ModelAdmin):
     #filter_horizontal = ('post',)
     list_display = ('id','user')
 
+
 admin.site.register(Post, PostAdmin)
 admin.site.register(Profile, ProfileAdmin)
