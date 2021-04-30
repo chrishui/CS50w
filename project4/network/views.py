@@ -206,3 +206,5 @@ def edit(request, post_id):
     # Request must be PUT
     else:
         return JsonResponse({"error": "PUT request required."}, status=400)
+
+# Like / unlike posts
