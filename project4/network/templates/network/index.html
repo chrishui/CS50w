@@ -35,9 +35,11 @@
         <button id="edit-btn-{{post.id}}" class="btn btn-primary" style="display:none;">Save</button>
 
         <!-- Like or unlike post -->
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and liked.objects.filter(user=user, post=post).exists() %}
           <div id="like-{{post.id}}" onclick="like('{{ post.id }}')" class="text-primary">Like</div>
         {% endif %}
+
+        <p> asd {{ post.liked_by }} </p>
         <!-- {% if user.is_authenticated and user in post.liked_by.all %}
           <button id="unlike-btn-{{post.id}}" onclick="like('{{ post.id }}')" class="btn btn-secondary" style="display:block;"> Unlike </button>
         {% endif %} -->

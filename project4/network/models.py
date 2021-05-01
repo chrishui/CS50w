@@ -18,7 +18,7 @@ class Post(TimeStampMixin):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length = 64)
     # below ok?
-    liked_by = models.ManyToManyField(User, blank=True, related_name="liked_by")
+    #liked_by = models.ManyToManyField(User, blank=True, related_name="liked_by")
 
     def __str__(self):
         return f"{self.id}, {self.user}: ${self.content}."
@@ -34,5 +34,8 @@ class Profile(models.Model):
 
 # Like / Unlike
 class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="liked_by")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="liked_post")
+
+    def __str__(self):
+        return f"{self.user} liked {self.post}"
