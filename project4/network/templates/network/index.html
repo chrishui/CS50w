@@ -17,9 +17,6 @@
       </form>
     {% endif %}
 
-    <!-- Test area -->
-    {{ liked_posts }}
-
     <!-- Display all users' submitted posts -->
     {% for post in page_obj %}
       <div class="border" style="margin: 10px; padding: 10px;">
@@ -38,19 +35,9 @@
         <button id="edit-btn-{{post.id}}" class="btn btn-primary" style="display:none;">Save</button>
 
         <!-- Like or unlike post -->
-        {% if user.is_authenticated%}
-          {% for liked_post in liked_posts %}
-            {% if liked_post.id == post.id %}
-              <div id="like-{{post.id}}" onclick="like('{{ post.id }}')" class="text-primary">Unlike</div>
-            {% endif %}
-          {% endfor %}
-          <!-- {% else %}
-            <div id="like-{{post.id}}" onclick="like('{{ post.id }}')" class="text-primary">Like</div> -->
+        {% if user.is_authenticated %}
+          <button class="btn mr-1 d-inline-block" style="background-color:white; border-color: #F0F8FF;" id="like-{{post.id}}" onclick="like('{{ post.id }}')">Like</button>
         {% endif %}
-
-        <!-- {% if user.is_authenticated and user in post.liked_by.all %}
-          <button id="unlike-btn-{{post.id}}" onclick="like('{{ post.id }}')" class="btn btn-secondary" style="display:block;"> Unlike </button>
-        {% endif %} -->
 
       </div>
     {% endfor %}

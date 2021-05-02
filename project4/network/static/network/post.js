@@ -23,7 +23,7 @@ function edit(post_id) {
   });
 }
 
-// Like/unlike posts 
+// Like/unlike posts
 function like(post_id) {
   var like_btn = document.querySelector(`#like-${post_id}`);
 
@@ -34,8 +34,18 @@ function like(post_id) {
   .then(response => response.json())
   .then(result => {
     console.log(result);
-    // Change button from 'like' to 'unlike'
-    document.querySelector(`#like-${post_id}`).innerHTML = 'Unlike';
+    if (result['message'] == 'Liked') {
+      // Change button from 'like' to 'unlike'
+      like_btn.style.backgroundColor = '#F0F8FF'
+      like_btn.innerHTML = 'Unlike'
+    }
+    if (result['message'] == 'Unliked') {
+      // Change button from 'like' to 'unlike'
+      like_btn.style.backgroundColor = 'White'
+      like_btn.innerHTML = 'Like'
+    }
+
   })
+
 
 }
