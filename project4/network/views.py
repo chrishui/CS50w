@@ -81,7 +81,10 @@ def index(request):
     page_obj = paginator.get_page(page_number)
 
     # Liked posts
-    liked = Like.objects.all()
+    liked_posts = []
+    for object in Like.objects.filter(user=request.user):
+        liked_posts.append(object)
+    #liked_posts = Like.objects.get(user=request.user)
     # Liked = Like.objects.filter(user=user, post=post).exists()
 
     # Create new post (Note: requres user to be authenticated)
@@ -114,7 +117,7 @@ def index(request):
     return render(request, "network/index.html", {
         "form": PostForm(),
         "page_obj": page_obj,
-        "liked": liked,
+        "liked_posts": liked_posts,
     })
 
 # Profile
