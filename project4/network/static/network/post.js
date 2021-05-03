@@ -44,7 +44,6 @@ function like(post_id) {
       like_btn.style.backgroundColor = 'White'
       like_btn.innerHTML = 'Like'
     }
-
   })
 
 
