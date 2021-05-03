@@ -34,13 +34,13 @@ function like(post_id) {
   .then(response => response.json())
   .then(result => {
     console.log(result);
+    // Change button from 'like' to 'unlike'
     if (result['message'] == 'Liked') {
-      // Change button from 'like' to 'unlike'
       like_btn.style.backgroundColor = '#F0F8FF'
       like_btn.innerHTML = 'Unlike'
     }
+    // Change button from 'like' to 'unlike'
     if (result['message'] == 'Unliked') {
-      // Change button from 'like' to 'unlike'
       like_btn.style.backgroundColor = 'White'
       like_btn.innerHTML = 'Like'
     }
