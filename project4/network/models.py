@@ -18,11 +18,14 @@ class Post(TimeStampMixin):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length = 64)
     likes = models.IntegerField(default=0)
-    # below ok?
-    #liked_by = models.ManyToManyField(User, blank=True, related_name="liked_by")
 
     def __str__(self):
         return f"{self.id}, {self.user}: ${self.content}."
+
+    def serialize(self):
+        return {
+            "likes": self.likes,
+        }
 
 # Profile
 class Profile(models.Model):

@@ -9,7 +9,6 @@ from django import forms
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import User
 from .models import *
 
 def login_view(request):
@@ -68,7 +67,7 @@ def register(request):
 
 # Index / all posts
 def index(request):
-    # Create new post - POST request (Note: requres user to be authenticated)
+    # Create new post - POST request
     if request.method == "POST":
         user = request.user
         content = request.POST["content"]
@@ -186,38 +185,36 @@ def edit(request, post_id):
 @csrf_exempt
 @login_required
 def like(request, post_id):
-
-    # Request must be via POST
-    if request.method != "POST":
-        return JsonResponse({"error": "POST request required."}, status=401)
-
     user = request.user
     post = Post.objects.get(id=post_id)
 
-    already_exists = Like.objects.filter(user=user, post=post).exists()
+    if request.method == "GET":
+        return JsonResponse(post.serialize())
 
-    # If user has previously liked the post, then unlike
-    if already_exists:
-        liked = Like.objects.get(user=user, post=post)
-        liked.delete()
-        post.likes -= 1
-        like_count = post.likes
-        post.save()
-        return JsonResponse({
-        "message": "Unliked",
-        "like_count": like_count
-        }, status=201)
-    # If user has not liked the post, then like
-    else:
-        like = Like.objects.create(user=user, post=post)
-        like.save()
-        # Update like count
-        post.likes += 1
-        like_count = post.likes
-        # like_count = post.likes
-        # post.likes = like_count + 1
-        post.save()
-        return JsonResponse({
-        "message": "Liked",
-        "like_count": like_count
-        }, status=201)
+    if request.method == "POST":
+
+        already_exists = Like.objects.filter(user=user, post=post).exists()
+
+        # If user has previously liked the post, then unlike
+        if already_exists:
+            liked = Like.objects.get(user=user, post=post)
+            liked.delete()
+            post.likes -= 1
+            like_count = post.likes
+            post.save()
+            return JsonResponse({
+            "message": "Unliked",
+            "like_count": like_count
+            }, status=201)
+        # If user has not liked the post, then like
+        else:
+            like = Like.objects.create(user=user, post=post)
+            like.save()
+            # Update like count
+            post.likes += 1
+            like_count = post.likes
+            post.save()
+            return JsonResponse({
+            "message": "Liked",
+            "like_count": like_count
+            }, status=201)
