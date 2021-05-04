@@ -17,7 +17,9 @@ class TimeStampMixin(models.Model):
 class Post(TimeStampMixin):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length = 64)
-    #liked_count = models.IntegerField()
+    likes = models.IntegerField(default=0)
+    # below ok?
+    #liked_by = models.ManyToManyField(User, blank=True, related_name="liked_by")
 
     def __str__(self):
         return f"{self.id}, {self.user}: ${self.content}."

@@ -66,13 +66,16 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-# Create Post
-class PostForm(forms.Form):
-    content = forms.CharField(label='', max_length=64, widget=forms.Textarea)
-
 # Index / all posts
 def index(request):
-    # Display posts chronologically (newest first)
+    # Create new post - POST request (Note: requres user to be authenticated)
+    if request.method == "POST":
+        user = request.user
+        content = request.POST["content"]
+        if content != "":
+            Post.objects.create(user=user, content=content, likes=0)
+
+    # Display newest posts first
     posts_chronological = Post.objects.order_by('-created_at')
 
     # Paginator, limit to 10 entries per page
@@ -80,35 +83,8 @@ def index(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    # Create new post (Note: requres user to be authenticated)
-    if request.method == "POST":
-        form = PostForm(request.POST)
-        user = request.user
-
-        # Check if submitted form is valid
-        if form.is_valid():
-            content = form.cleaned_data["content"]
-
-            # Create a new post instance
-            newEntry = Post.objects.create(user=user, content=content)
-            newEntry.save()
-
-            # Return index page with message confirmation (?)
-            return render(request, "network/index.html", {
-                "form": PostForm(),
-                "message": "Post created!",
-                "page_obj": page_obj,
-            })
-
-        # If submitted form is Invalid
-        else:
-            return render(request, "network/index.html", {
-                "form": form,
-            })
-
     # Get request
     return render(request, "network/index.html", {
-        "form": PostForm(),
         "page_obj": page_obj,
     })
 
@@ -130,9 +106,9 @@ def profile(request, user_id):
 
     # Display target user's number of ...
     # following:
-    following_count = len(Profile.objects.filter(user=target_user).values('following'))
+    following_count = Profile.objects.filter(user=target_user).values('following').count()
     # followers:
-    followers_count = len(Profile.objects.filter(user=target_user).values('followers'))
+    followers_count = Profile.objects.filter(user=target_user).values('followers').count()
 
     # Get request
     return render(request, "network/profile.html", {
@@ -224,9 +200,21 @@ def like(request, post_id):
     if already_exists:
         liked = Like.objects.get(user=user, post=post)
         liked.delete()
-        return JsonResponse({"message": "Unliked"}, status=201)
+        post.likes -= 1
+        like_count = post.likes
+        post.save()
+        return JsonResponse({
+        "message": "Unliked",
+        "likes": like_count - 1
+        }, status=201)
     # If user has not liked the post, then like
     else:
         like = Like.objects.create(user=user, post=post)
         like.save()
+        # Update like count
+        post.likes += 1
+        like_count = post.likes
+        # like_count = post.likes
+        # post.likes = like_count + 1
+        post.save()
         return JsonResponse({"message": "Liked"}, status=201)
