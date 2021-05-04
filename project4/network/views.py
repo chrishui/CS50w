@@ -205,7 +205,7 @@ def like(request, post_id):
         post.save()
         return JsonResponse({
         "message": "Unliked",
-        "likes": like_count - 1
+        "like_count": like_count
         }, status=201)
     # If user has not liked the post, then like
     else:
@@ -217,4 +217,7 @@ def like(request, post_id):
         # like_count = post.likes
         # post.likes = like_count + 1
         post.save()
-        return JsonResponse({"message": "Liked"}, status=201)
+        return JsonResponse({
+        "message": "Liked",
+        "like_count": like_count
+        }, status=201)

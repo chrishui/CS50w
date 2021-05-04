@@ -44,8 +44,8 @@ function like(post_id) {
       like_btn.style.backgroundColor = 'White'
       like_btn.innerHTML = 'Like'
     }
+    // Update like count of post
+    document.querySelector(`#post-likes-${post_id}`).innerHTML = result['like_count'];
 
-  })
-
-
+  });
 }
