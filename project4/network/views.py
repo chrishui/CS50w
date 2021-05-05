@@ -150,7 +150,7 @@ def following(request):
     # Logged in user
     user = request.user
 
-    # Obtain logged in user's list of following users' posts
+    # Obtain logged in user's following users' posts
     following_users = Profile.objects.filter(user=user).values_list('following')
     following_posts = []
     for profile in following_users:
