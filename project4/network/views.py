@@ -67,7 +67,7 @@ def register(request):
 
 # Index / all posts
 def index(request):
-    # Create new post - POST request
+    # Create new post, POST request
     if request.method == "POST":
         user = request.user
         content = request.POST["content"]
