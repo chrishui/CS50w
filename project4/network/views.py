@@ -104,7 +104,7 @@ def profile(request, user_id):
     following_check = Profile.objects.filter(user=user, following=target_user).exists()
 
     # Display target user's number of ...
-    # following:
+    # following users:
     following_count = Profile.objects.filter(user=target_user).values('following').count()
     # followers:
     followers_count = Profile.objects.filter(user=target_user).values('followers').count()
