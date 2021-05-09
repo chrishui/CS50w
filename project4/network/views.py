@@ -195,7 +195,7 @@ def like(request, post_id):
 
         already_exists = Like.objects.filter(user=user, post=post).exists()
 
-        # If user has previously liked the post, then unlike
+        # If user has previously liked the post, then unlike post
         if already_exists:
             liked = Like.objects.get(user=user, post=post)
             liked.delete()
@@ -206,7 +206,7 @@ def like(request, post_id):
             "message": "Unliked",
             "like_count": like_count
             }, status=201)
-        # If user has not liked the post, then like
+        # If user has not liked the post, then like post
         else:
             like = Like.objects.create(user=user, post=post)
             like.save()
